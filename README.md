@@ -8,3 +8,9 @@ See also:
 
 * https://developer.mozilla.org/en-US/docs/Web/API/XMLHttpRequest/Using_XMLHttpRequest#Monitoring_progress
 * https://developer.mozilla.org/en-US/docs/Web/API/XMLHttpRequest
+
+## Running the Server
+```
+>mvn jetty:run-war
+```
+served at http://localhost:8090/AJAXDownLoadDemo/
