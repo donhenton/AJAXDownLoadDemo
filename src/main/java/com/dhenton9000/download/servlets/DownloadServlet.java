@@ -5,6 +5,7 @@
  */
 package com.dhenton9000.download.servlets;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -39,33 +40,54 @@ public class DownloadServlet extends HttpServlet {
             throws ServletException, IOException {
 
         ServletContext context = this.getServletContext();
-        String fullPath = context.getRealPath("xls/TestData.xls");  
+        String fullPath = context.getRealPath("xls/TestData.xls");
         System.out.println("starting");
-        
-        File file = null;
-        InputStream in = null;
-        OutputStream outstream = null;
-        try {
-            response.reset();
-            file = new File(fullPath);
-            in = new FileInputStream(file);
-            response.setContentType("application/vnd.ms-excel");
-            response.addHeader("content-disposition", "attachment; filename=data.xls");
-            outstream = response.getOutputStream();
-            IOUtils.copyLarge(in, outstream);
-            response.flushBuffer();
-            System.out.println("finished");
-        } catch (Exception e) {
-            System.out.println("Unable to download file "+e.getMessage());
-        } finally {
-            IOUtils.closeQuietly(outstream);
-            IOUtils.closeQuietly(in);
+
+        String contentType = request.getHeader("Content-Type");
+        //contentType == null is a simple GET click
+
+        if (contentType == null || contentType.equals("application/json")) {
+
+            StringBuilder buffer = new StringBuilder();
+            BufferedReader reader = request.getReader();
+            String line;
+            while ((line = reader.readLine()) != null) {
+                buffer.append(line);
+            }
+            String data = buffer.toString();
+            System.out.println("data is "+data);
+            String fileExt= "alpha";
+            if (data.indexOf("1") > 0)
+            {
+                fileExt = "beta";
+            }
+            
+            File file = null;
+            InputStream in = null;
+            OutputStream outstream = null;
+            try {
+                response.reset();
+                file = new File(fullPath);
+                in = new FileInputStream(file);
+                response.setContentType("application/vnd.ms-excel");
+                response.addHeader("content-disposition", "attachment; filename=data"+fileExt+".xls");
+                outstream = response.getOutputStream();
+                IOUtils.copyLarge(in, outstream);
+                response.flushBuffer();
+                System.out.println("finished");
+            } catch (Exception e) {
+                System.out.println("Unable to download file " + e.getMessage());
+            } finally {
+                IOUtils.closeQuietly(outstream);
+                IOUtils.closeQuietly(in);
+
+            }
+        } else {
+
+            throw new ServletException("Content must be 'application/json'");
 
         }
     }
-    
-    
-
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
     /**

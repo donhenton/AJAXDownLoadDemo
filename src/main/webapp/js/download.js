@@ -1,14 +1,32 @@
-function doDownloadXHR()
+ 
+
+/* global fullPath */
+/* defined on page via java */
+
+function doDownloadXHR(requestId)
 {
 
     var xhr = new XMLHttpRequest();
-    xhr.open('POST', fullPath, true);
+    xhr.open('POST', fullPath, true); //to the download servlet
+    if (!requestId)
+    {
+        requestId = 0;
+    }
+    var dataToSend = JSON.stringify({"version": requestId});
     $('#loader').css({"visibility":"visible"})
     xhr.responseType = 'arraybuffer';
     xhr.addEventListener("loadend", function()
     {
          $('#loader').css({"visibility":"hidden"})
     })
+    xhr.addEventListener("onerror", function(event)
+    {
+        window.alert(JSON.stringify(event));
+    })
+    xhr.onerror = function(ev)
+    {
+        window.alert(JSON.stringify(ev));
+    }
     xhr.onload = function () {
         if (this.status === 200) {
             var filename = "";
@@ -53,9 +71,14 @@ function doDownloadXHR()
                 }, 100); // cleanup
             }
         }
+        else
+        {
+            window.alert(" error status "+this.status);
+        }
     };
-    xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
-    xhr.send();
+   // xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+    xhr.setRequestHeader('Content-Type', 'application/json');
+    xhr.send(dataToSend);
 
 
 

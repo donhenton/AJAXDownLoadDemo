@@ -23,7 +23,8 @@
 
 
 
-
-        <p><button onClick="doDownloadXHR()">Do AJAX Download</button> <span id="loader" class="loading"></span>    </p>
+        <h3>Pass using JSON</h3>
+        <p><button onClick="doDownloadXHR()">Do AJAX Download No parameter</button> <span id="loader" class="loading"></span>    </p>
+        <p><button onClick="doDownloadXHR(1)">Do AJAX Download Parameter 1</button> <span id="loader" class="loading"></span>    </p>
     </body>
 </html>
